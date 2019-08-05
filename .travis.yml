@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - 1.10.x
+  - 1.11.x
+
+before_install:
+  - make get_tools
+  - sh pre_test.sh
+
+install:
+  - make all
