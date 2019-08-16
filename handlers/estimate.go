@@ -1,11 +1,13 @@
 package handlers
 
 import (
+	"net/http"
+	"strconv"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 	"github.com/noah-blockchain/explorer-gate/core"
 	"github.com/noah-blockchain/explorer-gate/errors"
-	"github.com/gin-gonic/gin"
-	"net/http"
-	"strings"
 )
 
 func EstimateTxCommission(c *gin.Context) {
@@ -73,7 +75,10 @@ func EstimateCoinSell(c *gin.Context) {
 	coinToSell := strings.TrimSpace(c.Query(`coinToSell`))
 	coinToBuy := strings.TrimSpace(c.Query(`coinToBuy`))
 	value := strings.TrimSpace(c.Query(`valueToSell`))
-	estimate, err := gate.EstimateCoinSell(coinToSell, coinToBuy, value)
+	heightStr := strings.TrimSpace(c.Query(`height`))
+	height, _ := strconv.ParseUint(heightStr, 0, 64)
+
+	estimate, err := gate.EstimateCoinSell(coinToSell, coinToBuy, value, height)
 	if err != nil {
 		errors.SetErrorResponse(err, c)
 	} else {

@@ -3,15 +3,17 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"github.com/noah-blockchain/explorer-gate/core"
-	"github.com/noah-blockchain/explorer-gate/errors"
-	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
-	"github.com/tendermint/tendermint/libs/pubsub"
-	"github.com/tendermint/tendermint/libs/pubsub/query"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"net/http"
 	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
+	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/explorer-gate/errors"
+	"github.com/sirupsen/logrus"
+	"github.com/tendermint/tendermint/libs/pubsub"
+	"github.com/tendermint/tendermint/libs/pubsub/query"
 )
 
 func Index(c *gin.Context) {
@@ -83,7 +85,7 @@ func PushTransaction(c *gin.Context) {
 					"hash": &hash,
 				},
 			})
-		case <-time.After(time.Duration(gate.Config.GetInt("noahApi.timeOut")) * time.Second):
+		case <-time.After(time.Duration(env.GetEnvAsInt("NOAH_API_TIMEOUT", 10)) * time.Second):
 			gate.Logger.WithFields(logrus.Fields{
 				"transaction": tx,
 				"code":        504,
