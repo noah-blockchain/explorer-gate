@@ -1,38 +1,38 @@
-package explorer_gate
+package main
 
 import (
 	"context"
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/noah-blockchain/explorer-gate/api"
-	"github.com/noah-blockchain/explorer-gate/core"
 	"github.com/noah-blockchain/explorer-gate/env"
-	"github.com/noah-blockchain/noah-node-go-api"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/sirupsen/logrus"
-	"github.com/tendermint/tendermint/libs/pubsub"
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/noah-blockchain/explorer-gate/api"
+	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/noah-node-go-api"
+
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/sirupsen/logrus"
+	"github.com/tendermint/tendermint/libs/pubsub"
 )
 
 var Version string   // Version
 var GitCommit string // Git commit
 var BuildDate string // Build date
 var AppName string   // Application name
-var config env.Config
 
 var version = flag.Bool(`v`, false, `Prints current version`)
 
 // Initialize app.
 func init() {
-	config = env.NewViperConfig()
-	AppName = config.GetString(`name`)
-	Version = `1.3.0`
+	AppName = os.Getenv("APP_NAME")
+	Version = "1.3.0"
 
-	if config.GetBool(`debug`) {
-		fmt.Println(`Service RUN on DEBUG mode`)
+	if env.GetEnvAsBool("DEBUG_MODE", true) {
+		fmt.Println("Service RUN on DEBUG mode")
 	}
 }
 
@@ -48,7 +48,7 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
-	if config.GetBool(`debug`) {
+	if env.GetEnvAsBool("DEBUG_MODE", true) {
 		logger.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
@@ -71,14 +71,14 @@ func main() {
 		contextLogger.Error(err)
 	}
 
-	gateService := core.New(config, pubsubServer, contextLogger)
+	gateService := core.New(pubsubServer, contextLogger)
 
 	proto := `http`
-	if config.GetBool(`noahApi.isSecure`) {
+	if env.GetEnvAsBool("NOAH_API_SECURE", false) {
 		proto = `https`
 	}
-	apiLink := proto + `://` + config.GetString(`noahApi.link`) + `:` + config.GetString(`noahApi.port`)
 
+	apiLink := fmt.Sprintf("%s://%s:%s", proto, os.Getenv("NOAH_API_LINK"), os.Getenv("NOAH_API_PORT"))
 	nodeApi := noah_node_go_api.New(apiLink)
 
 	latestBlockResponse, err := nodeApi.GetStatus()
@@ -109,6 +109,7 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
+				// TODO: PublishWithTags deprecated
 				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{
 					"tx": fmt.Sprintf("%X", b),
 				})
@@ -124,5 +125,5 @@ func main() {
 		}
 	}()
 
-	api.Run(config, gateService, pubsubServer)
+	api.Run(gateService, pubsubServer)
 }

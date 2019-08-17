@@ -1,17 +1,18 @@
 package core
 
 import (
+	"fmt"
 	"github.com/noah-blockchain/explorer-gate/env"
 	"github.com/noah-blockchain/explorer-gate/errors"
 	"github.com/noah-blockchain/noah-node-go-api"
 	"github.com/sirupsen/logrus"
 	"github.com/tendermint/tendermint/libs/pubsub"
+	"os"
 	"strings"
 )
 
 type NoahGate struct {
 	api     *noah_node_go_api.NoahNodeApi
-	Config  env.Config
 	emitter *pubsub.Server
 	Logger  *logrus.Entry
 }
@@ -22,17 +23,17 @@ type CoinEstimate struct {
 }
 
 //New instance of Noah Gate
-func New(config env.Config, e *pubsub.Server, logger *logrus.Entry) *NoahGate {
+func New(e *pubsub.Server, logger *logrus.Entry) *NoahGate {
 
 	proto := `http`
-	if config.GetBool(`noahApi.isSecure`) {
+	if env.GetEnvAsBool("NOAH_API_SECURE", false) {
 		proto = `https`
 	}
-	apiLink := proto + `://` + config.GetString(`noahApi.link`) + `:` + config.GetString(`noahApi.port`)
+
+	apiLink := fmt.Sprintf("%s://%s:%s", proto, os.Getenv("NOAH_API_LINK"), os.Getenv("NOAH_API_PORT"))
 	return &NoahGate{
 		emitter: e,
 		api:     noah_node_go_api.New(apiLink),
-		Config:  config,
 		Logger:  logger,
 	}
 }
@@ -103,8 +104,8 @@ func (mg *NoahGate) EstimateCoinBuy(coinToSell string, coinToBuy string, value s
 }
 
 //Return estimate of sell coin
-func (mg *NoahGate) EstimateCoinSell(coinToSell string, coinToBuy string, value string) (*CoinEstimate, error) {
-	response, err := mg.api.GetEstimateCoinSell(coinToSell, coinToBuy, value)
+func (mg *NoahGate) EstimateCoinSell(coinToSell string, coinToBuy string, value string, height uint64) (*CoinEstimate, error) {
+	response, err := mg.api.GetEstimateCoinSell(coinToSell, coinToBuy, value, height)
 	if err != nil {
 		mg.Logger.WithFields(logrus.Fields{
 			"coinToSell": coinToSell,

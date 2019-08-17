@@ -1,14 +1,14 @@
-package explorer_gate
+package main
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"github.com/gin-gonic/gin"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/noah-blockchain/explorer-gate/api"
 	"github.com/noah-blockchain/explorer-gate/core"
 	"github.com/noah-blockchain/explorer-gate/env"
-	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/tendermint/tendermint/libs/pubsub"
