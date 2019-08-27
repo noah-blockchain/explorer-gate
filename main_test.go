@@ -1,14 +1,14 @@
-package main
+package explorer_gate
 
 import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/noah-blockchain/explorer-gate/api"
 	"github.com/noah-blockchain/explorer-gate/core"
 	"github.com/noah-blockchain/explorer-gate/env"
+	"github.com/gin-gonic/gin"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
 	"github.com/stretchr/testify/assert"
 	"github.com/tendermint/tendermint/libs/pubsub"
@@ -47,7 +47,7 @@ func init() {
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
 	contextLogger := logger.WithFields(logrus.Fields{
-		"version": "1.3.0",
+		"version": "0.1.0",
 		"app":     "Noah Gate Test",
 	})
 

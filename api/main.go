@@ -1,32 +1,30 @@
 package api
 
 import (
-	"fmt"
-	"net/http"
-	"os"
-
 	"github.com/Depado/ginprom"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"github.com/noah-blockchain/explorer-gate/handlers"
 	"github.com/tendermint/tendermint/libs/pubsub"
+	"net/http"
 )
 
 // Run API
-func Run(gateService *core.NoahGate, pubsubServer *pubsub.Server) {
-	router := SetupRouter(gateService, pubsubServer)
-	err := router.Run(fmt.Sprintf("%s:%s", os.Getenv("GATE_API_LINK"), os.Getenv("GATE_API_PORT")))
+func Run(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) {
+	router := SetupRouter(config, gateService, pubsubServer)
+	err := router.Run(config.GetString(`gateApi.link`) + `:` + config.GetString(`gateApi.port`))
 	if err != nil {
 		panic(err)
 	}
 }
 
 //Setup router
-func SetupRouter(gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.Engine {
+func SetupRouter(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.Engine {
 	router := gin.Default()
-	if os.Getenv("DEBUG_MODE") == "false" {
+	if !config.GetBool(`debug`) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 

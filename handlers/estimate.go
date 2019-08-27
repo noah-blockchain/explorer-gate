@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"strconv"
 	"strings"
 
 	"github.com/gin-gonic/gin"
@@ -75,10 +74,7 @@ func EstimateCoinSell(c *gin.Context) {
 	coinToSell := strings.TrimSpace(c.Query(`coinToSell`))
 	coinToBuy := strings.TrimSpace(c.Query(`coinToBuy`))
 	value := strings.TrimSpace(c.Query(`valueToSell`))
-	heightStr := strings.TrimSpace(c.Query(`height`))
-	height, _ := strconv.ParseUint(heightStr, 0, 64)
-
-	estimate, err := gate.EstimateCoinSell(coinToSell, coinToBuy, value, height)
+	estimate, err := gate.EstimateCoinSell(coinToSell, coinToBuy, value)
 	if err != nil {
 		errors.SetErrorResponse(err, c)
 	} else {

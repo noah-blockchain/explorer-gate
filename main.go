@@ -1,20 +1,19 @@
-package main
+package explorer_gate
 
 import (
 	"context"
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/noah-blockchain/explorer-gate/env"
 	"os"
 	"strconv"
 	"time"
 
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/noah-blockchain/explorer-gate/api"
 	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"github.com/noah-blockchain/noah-node-go-api"
-
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
 	"github.com/tendermint/tendermint/libs/pubsub"
 )
@@ -23,16 +22,18 @@ var Version string   // Version
 var GitCommit string // Git commit
 var BuildDate string // Build date
 var AppName string   // Application name
+var config env.Config
 
 var version = flag.Bool(`v`, false, `Prints current version`)
 
 // Initialize app.
 func init() {
-	AppName = os.Getenv("APP_NAME")
-	Version = "1.3.0"
+	config = env.NewViperConfig()
+	AppName = config.GetString(`name`)
+	Version = `0.1.0`
 
-	if env.GetEnvAsBool("DEBUG_MODE", true) {
-		fmt.Println("Service RUN on DEBUG mode")
+	if config.GetBool(`debug`) {
+		fmt.Println(`Service RUN on DEBUG mode`)
 	}
 }
 
@@ -48,7 +49,7 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
-	if env.GetEnvAsBool("DEBUG_MODE", true) {
+	if config.GetBool(`debug`) {
 		logger.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
@@ -71,14 +72,14 @@ func main() {
 		contextLogger.Error(err)
 	}
 
-	gateService := core.New(pubsubServer, contextLogger)
+	gateService := core.New(config, pubsubServer, contextLogger)
 
 	proto := `http`
-	if env.GetEnvAsBool("NOAH_API_SECURE", false) {
+	if config.GetBool(`noahApi.isSecure`) {
 		proto = `https`
 	}
+	apiLink := proto + `://` + config.GetString(`noahApi.link`) + `:` + config.GetString(`noahApi.port`)
 
-	apiLink := fmt.Sprintf("%s://%s:%s", proto, os.Getenv("NOAH_API_LINK"), os.Getenv("NOAH_API_PORT"))
 	nodeApi := noah_node_go_api.New(apiLink)
 
 	latestBlockResponse, err := nodeApi.GetStatus()
@@ -109,8 +110,7 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
-				// TODO: PublishWithTags deprecated
-				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{
+				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{ // todo
 					"tx": fmt.Sprintf("%X", b),
 				})
 				if err != nil {
@@ -125,5 +125,5 @@ func main() {
 		}
 	}()
 
-	api.Run(gateService, pubsubServer)
+	api.Run(config, gateService, pubsubServer)
 }
