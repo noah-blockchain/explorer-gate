@@ -104,7 +104,7 @@ func (mg *NoahGate) EstimateCoinBuy(coinToSell string, coinToBuy string, value s
 
 //Return estimate of sell coin
 func (mg *NoahGate) EstimateCoinSell(coinToSell string, coinToBuy string, value string) (*CoinEstimate, error) {
-	response, err := mg.api.GetEstimateCoinSell(coinToSell, coinToBuy, value)
+	response, err := mg.api.GetEstimateCoinSell(coinToSell, coinToBuy, value, 0) // fixed here
 	if err != nil {
 		mg.Logger.WithFields(logrus.Fields{
 			"coinToSell": coinToSell,

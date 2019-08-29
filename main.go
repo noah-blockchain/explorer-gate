@@ -1,4 +1,4 @@
-package explorer_gate
+package main
 
 import (
 	"context"
@@ -110,9 +110,11 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
-				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{ // todo
-					"tx": fmt.Sprintf("%X", b),
-				})
+				err := pubsubServer.PublishWithEvents(
+					context.TODO(),
+					map[string]string{"tx": fmt.Sprintf("%X", b)},
+					map[string][]string{"tm.events.type": {"NewTx"}},
+				)
 				if err != nil {
 					logger.Error(err)
 				}
