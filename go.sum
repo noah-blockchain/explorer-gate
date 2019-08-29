@@ -141,12 +141,10 @@ github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd/go.mod h1:6dJ
 github.com/modern-go/reflect2 v1.0.1 h1:9f412s+6RmYXLWZSEzVVgPGK7C2PphHj5RJrvfx9AWI=
 github.com/modern-go/reflect2 v1.0.1/go.mod h1:bx2lNnkwVCuqBIxFjflWJWanXIb3RllmbCylyMrvgv0=
 github.com/mwitkow/go-conntrack v0.0.0-20161129095857-cc309e4a2223/go.mod h1:qRWi+5nqEBWmkhHvq77mSJWrCKwh8bxhgT7d/eI7P4U=
-github.com/noah-blockchain/go-amino v0.14.1 h1:iqlYeVhULwzKLyfnWmtYHTi70kvMy8Uls8yqCjxC9ac=
-github.com/noah-blockchain/go-amino v0.14.1/go.mod h1:wN4aoIRfDGzuUw0qVcWyOS6BYPkAkmXaWGqge9XZIZU=
-github.com/noah-blockchain/noah-explorer-tools v0.1.0 h1:44+iD86u/7teWGjubUV/a6eDBYSlouR8OkMWG9r34pY=
-github.com/noah-blockchain/noah-explorer-tools v0.1.0/go.mod h1:oCbwTrKYa/XbmR6XUrBd1wRo3jbohSDijpUCQNRdmTU=
-github.com/noah-blockchain/noah-node-go-api v0.1.0 h1:W0R7pZoSJuGNwTJ9Lr2rE2GVX7ffI5Ykk9L8C0aQX3U=
-github.com/noah-blockchain/noah-node-go-api v0.1.0/go.mod h1:1tx9hlF7m/5SsPsvwVtD6fSfJFFTpafWqdZrz/JhQus=
+github.com/noah-blockchain/noah-explorer-tools v0.1.0 h1:PW4nsORdRmpPdvUpV7i7Oa+odjQn2EWuiI6PzawcpNw=
+github.com/noah-blockchain/noah-explorer-tools v0.1.0/go.mod h1:6s81RdmnvrxHCwH7TN/VLOmtbfypBBLjKv/ItmaEidw=
+github.com/noah-blockchain/noah-node-go-api v0.1.0 h1:E8XPSeWfqHidPXmubGHkAuKSse4SQsHr0aoYa04nJnY=
+github.com/noah-blockchain/noah-node-go-api v0.1.0/go.mod h1:9vGXtPs/YP1p33jQ8ghP1Tk4AABhA+T3O1vHccio3VY=
 github.com/olebedev/emitter v0.0.0-20190110104742-e8d1457e6aee/go.mod h1:eT2/Pcsim3XBjbvldGiJBvvgiqZkAFyiOJJsDKXs/ts=
 github.com/onsi/ginkgo v1.6.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
 github.com/onsi/ginkgo v1.7.0/go.mod h1:lLunBs/Ym6LB5Z9jYTR76FiuTmxDTDusOGeTQH+WWjE=
@@ -202,6 +200,7 @@ github.com/stretchr/testify v1.4.0 h1:2E4SXV/wtOkTonXsotYi4li6zVWxYlZuYNCXe9XRJy
 github.com/stretchr/testify v1.4.0/go.mod h1:j7eGeouHqKxXV5pUuKE4zz7dFj8WfuZ+81PSLYec5m4=
 github.com/syndtr/goleveldb v0.0.0-20181127023241-353a9fca669c/go.mod h1:Z4AUp2Km+PwemOoO/VB5AOx9XSsIItzFjoJlOSiYmn0=
 github.com/syndtr/goleveldb v1.0.1-0.20190318030020-c3a204f8e965/go.mod h1:9OrXJhf154huy1nPWmuSrkgjPUtUNhA+Zmy+6AESzuA=
+github.com/tendermint/go-amino v0.14.1 h1:o2WudxNfdLNBwMyl2dqOJxiro5rfrEaU0Ugs6offJMk=
 github.com/tendermint/go-amino v0.14.1/go.mod h1:i/UKE5Uocn+argJJBb12qTZsCDBcAYMbR92AaJVmKso=
 github.com/tendermint/tendermint v0.32.2 h1:FvZWdksfDg/65vKKr5Lgo57keARFnmhrUEXHwyrV1QY=
 github.com/tendermint/tendermint v0.32.2/go.mod h1:NwMyx58S8VJ7tEpFKqRVlVWKO9N9zjTHu+Dx96VsnOE=
