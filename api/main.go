@@ -15,7 +15,7 @@ import (
 // Run API
 func Run(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) {
 	router := SetupRouter(config, gateService, pubsubServer)
-	err := router.Run(config.GetString(`gateApi.link`) + `:` + config.GetString(`gateApi.port`))
+	err := router.Run(config.GetString("gateApi.link") + ":" + config.GetString("gateApi.port"))
 	if err != nil {
 		panic(err)
 	}
@@ -24,7 +24,7 @@ func Run(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Ser
 //Setup router
 func SetupRouter(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.Engine {
 	router := gin.Default()
-	if !config.GetBool(`debug`) {
+	if !config.GetBool("debug") {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -39,17 +39,17 @@ func SetupRouter(config env.Config, gateService *core.NoahGate, pubsubServer *pu
 	router.Use(gin.Recovery())                           // returns 500 on any code panics
 	router.Use(apiMiddleware(gateService, pubsubServer)) // init global context
 
-	router.GET(`/`, handlers.Index)
+	router.GET("/", handlers.Index)
 
 	v1 := router.Group("/api/v1")
 	{
-		v1.GET(`/estimate/tx-commission`, handlers.EstimateTxCommission)
-		v1.GET(`/estimate/coin-buy`, handlers.EstimateCoinBuy)
-		v1.GET(`/estimate/coin-sell`, handlers.EstimateCoinSell)
-		v1.GET(`/estimate/coin-sell-all`, handlers.EstimateCoinSellAll)
-		v1.GET(`/nonce/:address`, handlers.GetNonce)
-		v1.GET(`/min-gas`, handlers.GetMinGas)
-		v1.POST(`/transaction/push`, handlers.PushTransaction)
+		v1.GET("/estimate/tx-commission", handlers.EstimateTxCommission)
+		v1.GET("/estimate/coin-buy", handlers.EstimateCoinBuy)
+		v1.GET("/estimate/coin-sell", handlers.EstimateCoinSell)
+		v1.GET("/estimate/coin-sell-all", handlers.EstimateCoinSellAll)
+		v1.GET("/nonce/:address", handlers.GetNonce)
+		v1.GET("/min-gas", handlers.GetMinGas)
+		v1.POST("/transaction/push", handlers.PushTransaction)
 	}
 	// Default handler 404
 	router.NoRoute(func(c *gin.Context) {

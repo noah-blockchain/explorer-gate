@@ -13,6 +13,5 @@ require (
 	github.com/sirupsen/logrus v1.4.2
 	github.com/spf13/viper v1.0.0
 	github.com/stretchr/testify v1.4.0
-	github.com/tendermint/tendermint v0.32.0
-	github.com/valyala/fasthttp v1.4.0 // indirect
+	github.com/tendermint/tendermint v0.32.2
 )
