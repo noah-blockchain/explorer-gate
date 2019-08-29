@@ -54,7 +54,7 @@ func (mg NoahGate) TxPush(transaction string) (*string, error) {
 		}).Warn(err)
 		return nil, err
 	}
-	hash := `Mtz` + strings.ToLower(response.Result.Hash)
+	hash := `Mt` + strings.ToLower(response.Result.Hash)
 	return &hash, nil
 }
 
