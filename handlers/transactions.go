@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"net/http"
 	"strings"
 	"time"
@@ -84,7 +85,7 @@ func PushTransaction(c *gin.Context) {
 					"hash": &hash,
 				},
 			})
-		case <-time.After(time.Duration(gate.Config.GetInt("noahApi.timeOut")) * time.Second):
+		case <-time.After(time.Duration(env.GetEnvAsInt(env.NoahApiTimeoutEnv, 5)) * time.Second):
 			gate.Logger.WithFields(logrus.Fields{
 				"transaction": tx,
 				"code":        504,

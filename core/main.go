@@ -11,7 +11,6 @@ import (
 
 type NoahGate struct {
 	api     *noah_node_go_api.NoahNodeApi
-	Config  env.Config
 	emitter *pubsub.Server
 	Logger  *logrus.Entry
 }
@@ -22,17 +21,10 @@ type CoinEstimate struct {
 }
 
 //New instance of Noah Gate
-func New(config env.Config, e *pubsub.Server, logger *logrus.Entry) *NoahGate {
-
-	proto := `http`
-	if config.GetBool(`noahApi.isSecure`) {
-		proto = `https`
-	}
-	apiLink := proto + `://` + config.GetString(`noahApi.link`) + `:` + config.GetString(`noahApi.port`)
+func New(e *pubsub.Server, logger *logrus.Entry) *NoahGate {
 	return &NoahGate{
 		emitter: e,
-		api:     noah_node_go_api.New(apiLink),
-		Config:  config,
+		api:     noah_node_go_api.New(env.GetEnv(env.NoahApiNodeEnv, "")),
 		Logger:  logger,
 	}
 }
@@ -54,7 +46,7 @@ func (mg NoahGate) TxPush(transaction string) (*string, error) {
 		}).Warn(err)
 		return nil, err
 	}
-	hash := `Mt` + strings.ToLower(response.Result.Hash)
+	hash := `Nt` + strings.ToLower(response.Result.Hash)
 	return &hash, nil
 }
 
