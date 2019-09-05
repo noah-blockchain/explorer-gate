@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"github.com/Depado/ginprom"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
@@ -13,18 +14,19 @@ import (
 )
 
 // Run API
-func Run(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) {
-	router := SetupRouter(config, gateService, pubsubServer)
-	err := router.Run(config.GetString("gateApi.link") + ":" + config.GetString("gateApi.port"))
+func Run(gateService *core.NoahGate, pubsubServer *pubsub.Server) {
+	router := SetupRouter(gateService, pubsubServer)
+	gateLink := fmt.Sprintf("%s:%s", env.GetEnv(env.GateApiHostEnv, ""), env.GetEnv(env.GateApiPortEnv, ""))
+	err := router.Run(gateLink)
 	if err != nil {
 		panic(err)
 	}
 }
 
 //Setup router
-func SetupRouter(config env.Config, gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.Engine {
+func SetupRouter(gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.Engine {
 	router := gin.Default()
-	if !config.GetBool("debug") {
+	if !env.GetEnvAsBool(env.DebugModeEnv, true) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
@@ -41,7 +43,7 @@ func SetupRouter(config env.Config, gateService *core.NoahGate, pubsubServer *pu
 
 	router.GET("/", handlers.Index)
 
-	v1 := router.Group("/api/v1")
+	v1 := router.Group("/-")
 	{
 		v1.GET("/estimate/tx-commission", handlers.EstimateTxCommission)
 		v1.GET("/estimate/coin-buy", handlers.EstimateCoinBuy)

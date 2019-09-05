@@ -1,51 +1,32 @@
 package env
 
 import (
-	"strings"
-
-	"github.com/noah-blockchain/noah-explorer-tools/helpers"
-	"github.com/spf13/viper"
+	"os"
+	"strconv"
 )
 
-type Config interface {
-	GetString(key string) string
-	GetInt(key string) int
-	GetBool(key string) bool
-	Init()
+func GetEnv(key string, defaultVal string) string {
+	if value, exists := os.LookupEnv(key); exists {
+		return value
+	}
+
+	return defaultVal
 }
 
-type viperConfig struct {
+func GetEnvAsInt(name string, defaultVal int) int {
+	valueStr := GetEnv(name, "")
+	if value, err := strconv.Atoi(valueStr); err == nil {
+		return value
+	}
+
+	return defaultVal
 }
 
-func (v *viperConfig) Init() {
-	viper.AutomaticEnv()
+func GetEnvAsBool(name string, defaultVal bool) bool {
+	valStr := GetEnv(name, "")
+	if val, err := strconv.ParseBool(valStr); err == nil {
+		return val
+	}
 
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("/etc/noah/") // path to look for the config file in
-
-	replacer := strings.NewReplacer(`.`, `_`)
-	viper.SetEnvKeyReplacer(replacer)
-	viper.SetConfigType(`json`)
-	viper.SetConfigFile(`config.json`)
-	err := viper.ReadInConfig()
-
-	helpers.HandleError(err)
-}
-
-func (v *viperConfig) GetString(key string) string {
-	return viper.GetString(key)
-}
-
-func (v *viperConfig) GetInt(key string) int {
-	return viper.GetInt(key)
-}
-
-func (v *viperConfig) GetBool(key string) bool {
-	return viper.GetBool(key)
-}
-
-func NewViperConfig() Config {
-	v := &viperConfig{}
-	v.Init()
-	return v
+	return defaultVal
 }

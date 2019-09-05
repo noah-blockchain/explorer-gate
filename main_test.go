@@ -1,4 +1,4 @@
-package explorer_gate
+package main
 
 import (
 	"bytes"

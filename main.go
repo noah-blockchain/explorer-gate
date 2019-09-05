@@ -1,4 +1,4 @@
-package explorer_gate
+package main
 
 import (
 	"context"
@@ -22,17 +22,15 @@ var Version string   // Version
 var GitCommit string // Git commit
 var BuildDate string // Build date
 var AppName string   // Application name
-var config env.Config
 
 var version = flag.Bool(`v`, false, `Prints current version`)
 
 // Initialize app.
 func init() {
-	config = env.NewViperConfig()
-	AppName = config.GetString(`name`)
+	AppName = env.GetEnv(env.AppNameEnv, "")
 	Version = `0.1.0`
 
-	if config.GetBool(`debug`) {
+	if env.GetEnvAsBool(env.DebugModeEnv, true) {
 		fmt.Println(`Service RUN on DEBUG mode`)
 	}
 }
@@ -49,7 +47,7 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
-	if config.GetBool(`debug`) {
+	if env.GetEnvAsBool(env.DebugModeEnv, true) {
 		logger.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
@@ -72,15 +70,9 @@ func main() {
 		contextLogger.Error(err)
 	}
 
-	gateService := core.New(config, pubsubServer, contextLogger)
+	gateService := core.New(pubsubServer, contextLogger)
 
-	proto := `http`
-	if config.GetBool(`noahApi.isSecure`) {
-		proto = `https`
-	}
-	apiLink := proto + `://` + config.GetString(`noahApi.link`) + `:` + config.GetString(`noahApi.port`)
-
-	nodeApi := noah_node_go_api.New(apiLink)
+	nodeApi := noah_node_go_api.New(env.GetEnv(env.NoahApiNodeEnv, ""))
 
 	latestBlockResponse, err := nodeApi.GetStatus()
 	if err != nil {
@@ -110,9 +102,11 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
-				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{ // todo
-					"tx": fmt.Sprintf("%X", b),
-				})
+				err := pubsubServer.PublishWithEvents(
+					context.TODO(),
+					map[string]string{"tx": fmt.Sprintf("%X", b)},
+					map[string][]string{"tm.events.type": {"NewTx"}},
+				)
 				if err != nil {
 					logger.Error(err)
 				}
@@ -125,5 +119,5 @@ func main() {
 		}
 	}()
 
-	api.Run(config, gateService, pubsubServer)
+	api.Run(gateService, pubsubServer)
 }
