@@ -14,3 +14,21 @@ Noah Gate is a service which provides to clients publish prepared transactions t
 Don't forget to read the [documentation](https://noah-blockchain.github.io/noah-gate-docs/)
 
 _NOTE: This project in active development stage so feel free to send us questions, issues, and wishes_
+
+## BUILD
+
+- make create_vendor
+- make build
+
+## Configure Extender Service from Environment (example in .env.example)
+1) Set up connect to Node which working in non-validator mode. 
+2) Set up connect to Gate service. 
+
+## RUN
+./gate
+
+_We recommend use our official docker image._
+### Important Environments
+Example for all important environments you can see in file .env.example.
+Its config for connect Node API URL, Gate service and service mode (debug, prod).
+
