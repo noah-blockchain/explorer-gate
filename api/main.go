@@ -43,7 +43,7 @@ func SetupRouter(gateService *core.NoahGate, pubsubServer *pubsub.Server) *gin.E
 
 	router.GET("/", handlers.Index)
 
-	v1 := router.Group("/-")
+	v1 := router.Group("/api/v1")
 	{
 		v1.GET("/estimate/tx-commission", handlers.EstimateTxCommission)
 		v1.GET("/estimate/coin-buy", handlers.EstimateCoinBuy)

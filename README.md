@@ -13,6 +13,8 @@ Noah Gate is a service which provides to clients publish prepared transactions t
 
 Don't forget to read the [documentation](https://noah-blockchain.github.io/noah-gate-docs/)
 
+Documentation for Gate API [documentation](https://app.swaggerhub.com/apis-docs/noah-blockchain/Noah/1.0.0-oas3)
+
 _NOTE: This project in active development stage so feel free to send us questions, issues, and wishes_
 
 ## BUILD
