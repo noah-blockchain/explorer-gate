@@ -11,7 +11,7 @@ import (
 )
 
 func GetNodeErrorFromResponse(r *responses.SendTransactionResponse) error {
-	bip := big.NewFloat(0.000000000000000001)
+	noah := big.NewFloat(0.000000000000000001)
 	if r.Error != nil && r.Error.TxResult != nil {
 		switch r.Error.TxResult.Code {
 		case 107:
@@ -22,7 +22,7 @@ func GetNodeErrorFromResponse(r *responses.SendTransactionResponse) error {
 				if err != nil {
 					return err
 				}
-				value = value.Mul(value, bip)
+				value = value.Mul(value, noah)
 				strValue := value.Text('f', 10)
 				return NewInsufficientFundsError(strings.Replace(r.Error.TxResult.Log, matches[1], strValue, -1), int32(r.Error.TxResult.Code), strValue, matches[2])
 			}
@@ -35,12 +35,12 @@ func GetNodeErrorFromResponse(r *responses.SendTransactionResponse) error {
 				if err != nil {
 					return err
 				}
-				valueWant = valueWant.Mul(valueWant, bip)
+				valueWant = valueWant.Mul(valueWant, noah)
 				valueNeed, _, err := big.ParseFloat(matches[2], 10, 0, big.ToZero)
 				if err != nil {
 					return err
 				}
-				valueNeed = valueNeed.Mul(valueNeed, bip)
+				valueNeed = valueNeed.Mul(valueNeed, noah)
 				replacer := strings.NewReplacer(
 					matches[1], valueWant.Text('g', 10),
 					matches[2], valueNeed.Text('g', 10))
@@ -62,7 +62,7 @@ func GetNodeErrorFromResponse(r *responses.SendTransactionResponse) error {
 }
 
 func formatErrorMessage(errorString string) (string, error) {
-	bip := big.NewFloat(0.000000000000000001)
+	noah := big.NewFloat(0.000000000000000001)
 	zero := big.NewFloat(0)
 
 	re := regexp.MustCompile(`(?mi)(Has:|required|Wanted|Expected|maximum|spend|minimum|get) -*(\d+)`)
@@ -75,7 +75,7 @@ func formatErrorMessage(errorString string) (string, error) {
 			if err != nil {
 				return "", err
 			}
-			value = value.Mul(value, bip)
+			value = value.Mul(value, noah)
 
 			if value.Cmp(zero) == 0 {
 				valueString = "0"
