@@ -102,11 +102,9 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
-				err := pubsubServer.PublishWithEvents(
-					context.TODO(),
-					map[string]string{"tx": fmt.Sprintf("%X", b)},
-					map[string][]string{"tm.events.type": {"NewTx"}},
-				)
+				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{
+					"tx": fmt.Sprintf("%X", b),
+				})
 				if err != nil {
 					logger.Error(err)
 				}

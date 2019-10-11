@@ -11,5 +11,5 @@ require (
 	github.com/olebedev/emitter v0.0.0-20190110104742-e8d1457e6aee // indirect
 	github.com/sirupsen/logrus v1.4.2
 	github.com/stretchr/testify v1.4.0
-	github.com/tendermint/tendermint v0.32.2
+	github.com/tendermint/tendermint v0.31.5
 )
