@@ -28,7 +28,7 @@ var version = flag.Bool(`v`, false, `Prints current version`)
 // Initialize app.
 func init() {
 	AppName = env.GetEnv(env.AppNameEnv, "")
-	Version = `0.1.0`
+	Version = `0.1.1`
 
 	if env.GetEnvAsBool(env.DebugModeEnv, true) {
 		fmt.Println(`Service RUN on DEBUG mode`)
