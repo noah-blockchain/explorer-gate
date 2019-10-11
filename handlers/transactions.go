@@ -19,7 +19,7 @@ import (
 func Index(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"name":    "Noah Explorer Gate API",
-		"version": "0.1.0",
+		"version": "0.1.1",
 	})
 }
 
