@@ -5,16 +5,15 @@ import (
 	"encoding/hex"
 	"flag"
 	"fmt"
-	"github.com/noah-blockchain/explorer-gate/env"
 	"os"
 	"strconv"
 	"time"
 
+	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/noah-blockchain/explorer-gate/api"
 	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"github.com/noah-blockchain/noah-node-go-api"
-
-	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"github.com/sirupsen/logrus"
 	"github.com/tendermint/tendermint/libs/pubsub"
 )
@@ -28,11 +27,11 @@ var version = flag.Bool(`v`, false, `Prints current version`)
 
 // Initialize app.
 func init() {
-	AppName = os.Getenv("APP_NAME")
-	Version = "1.3.0"
+	AppName = env.GetEnv(env.AppNameEnv, "")
+	Version = `0.1.1`
 
-	if env.GetEnvAsBool("DEBUG_MODE", true) {
-		fmt.Println("Service RUN on DEBUG mode")
+	if env.GetEnvAsBool(env.DebugModeEnv, true) {
+		fmt.Println(`Service RUN on DEBUG mode`)
 	}
 }
 
@@ -48,7 +47,7 @@ func main() {
 	logger.SetFormatter(&logrus.JSONFormatter{})
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
-	if env.GetEnvAsBool("DEBUG_MODE", true) {
+	if env.GetEnvAsBool(env.DebugModeEnv, true) {
 		logger.SetFormatter(&logrus.TextFormatter{
 			DisableColors: false,
 			FullTimestamp: true,
@@ -73,13 +72,7 @@ func main() {
 
 	gateService := core.New(pubsubServer, contextLogger)
 
-	proto := `http`
-	if env.GetEnvAsBool("NOAH_API_SECURE", false) {
-		proto = `https`
-	}
-
-	apiLink := fmt.Sprintf("%s://%s:%s", proto, os.Getenv("NOAH_API_LINK"), os.Getenv("NOAH_API_PORT"))
-	nodeApi := noah_node_go_api.New(apiLink)
+	nodeApi := noah_node_go_api.New(env.GetEnv(env.NoahApiNodeEnv, ""))
 
 	latestBlockResponse, err := nodeApi.GetStatus()
 	if err != nil {
@@ -109,7 +102,6 @@ func main() {
 
 			for _, tx := range block.Result.Transactions {
 				b, _ := hex.DecodeString(tx.RawTx)
-				// TODO: PublishWithTags deprecated
 				err := pubsubServer.PublishWithTags(context.TODO(), "NewTx", map[string]string{
 					"tx": fmt.Sprintf("%X", b),
 				})

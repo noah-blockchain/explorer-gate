@@ -13,34 +13,13 @@ DOCKER_TAG = latest
 SERVER ?= gate.noah.network
 PACKAGES=$(shell go list ./... | grep -v '/vendor/')
 
-GOTOOLS = \
-    github.com/golang/dep/cmd/dep
-
-check: check_tools ensure_deps
-
-all: check test build
-
-### Tools & dependencies ####
-check_tools:
-	@# https://stackoverflow.com/a/25668869
-	@echo "Found tools: $(foreach tool,$(notdir $(GOTOOLS)),\
-        $(if $(shell which $(tool)),$(tool),$(error "No $(tool) in PATH")))"
-
-get_tools:
-	@echo "--> Installing tools"
-	./get_tools.sh
+all: test build
 
 #Run this from CI
-get_vendor_deps:
-	@rm -rf vendor/
-	@echo "--> Running dep"
-	@dep ensure -vendor-only
-
-#Run this locally.
-ensure_deps:
-	@rm -rf vendor/
-	@echo "--> Running dep"
-	@dep ensure
+create_vendor:
+	@rm -rf vendor
+	@echo "--> Running go mod vendor"
+	@go mod vendor
 
 ### Build ###################
 build: clean
@@ -60,4 +39,4 @@ test:
 fmt:
 	@go fmt ./...
 
-.PHONY: check check_tools get_vendor_deps ensure_deps build clean fmt test
+.PHONY: create_vendor build clean fmt test

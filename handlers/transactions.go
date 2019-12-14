@@ -3,13 +3,13 @@ package handlers
 import (
 	"context"
 	"fmt"
-	"github.com/noah-blockchain/explorer-gate/env"
 	"net/http"
 	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/noah-blockchain/explorer-gate/env"
 	"github.com/noah-blockchain/explorer-gate/errors"
 	"github.com/sirupsen/logrus"
 	"github.com/tendermint/tendermint/libs/pubsub"
@@ -19,7 +19,7 @@ import (
 func Index(c *gin.Context) {
 	c.JSON(200, gin.H{
 		"name":    "Noah Explorer Gate API",
-		"version": "1.3.0",
+		"version": "0.1.1",
 	})
 }
 
@@ -85,7 +85,7 @@ func PushTransaction(c *gin.Context) {
 					"hash": &hash,
 				},
 			})
-		case <-time.After(time.Duration(env.GetEnvAsInt("NOAH_API_TIMEOUT", 10)) * time.Second):
+		case <-time.After(time.Duration(env.GetEnvAsInt(env.NoahApiTimeoutEnv, 5)) * time.Second):
 			gate.Logger.WithFields(logrus.Fields{
 				"transaction": tx,
 				"code":        504,

@@ -4,22 +4,21 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"github.com/gin-gonic/gin"
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-	"github.com/noah-blockchain/explorer-gate/api"
-	"github.com/noah-blockchain/explorer-gate/core"
-	"github.com/noah-blockchain/explorer-gate/env"
-	"github.com/sirupsen/logrus"
-	"github.com/stretchr/testify/assert"
-	"github.com/tendermint/tendermint/libs/pubsub"
 	"net/http"
 	"net/http/httptest"
 	"os"
 	"testing"
+
+	"github.com/gin-gonic/gin"
+	_ "github.com/jinzhu/gorm/dialects/postgres"
+	"github.com/noah-blockchain/explorer-gate/api"
+	"github.com/noah-blockchain/explorer-gate/core"
+	"github.com/sirupsen/logrus"
+	"github.com/stretchr/testify/assert"
+	"github.com/tendermint/tendermint/libs/pubsub"
 )
 
 var (
-	cfg         env.Config
 	router      *gin.Engine
 	gateService *core.NoahGate
 	testTx      = `f8820d018a4d4e540000000000000001a9e88a4d4e5400000000000000941b685a7c1e78726c48f619c497a07ed75fe00483872386f26fc10000808001b845f8431ca05ddcd3ffd2d5b21ffe4686cadbb462bad9facdd7ee0c2db31a7b6da6f06468b3a044df8fc8b4c4190ef352e0f70112527b6b25c4a22a67c9e9365ac7e511ac12f3`
@@ -47,7 +46,7 @@ func init() {
 	logger.SetOutput(os.Stdout)
 	logger.SetReportCaller(true)
 	contextLogger := logger.WithFields(logrus.Fields{
-		"version": "1.3.0",
+		"version": "0.1.0",
 		"app":     "Noah Gate Test",
 	})
 
@@ -57,9 +56,8 @@ func init() {
 		panic(err)
 	}
 
-	cfg = env.NewViperConfig()
-	gateService = core.New(cfg, pubsubServer, contextLogger)
-	router = api.SetupRouter(cfg, gateService, pubsubServer)
+	gateService = core.New(pubsubServer, contextLogger)
+	router = api.SetupRouter(gateService, pubsubServer)
 }
 
 func TestPushWrongTransaction(t *testing.T) {
