@@ -1,3 +1,6 @@
+include .env
+export
+
 APP ?= gate
 VERSION ?= $(strip $(shell cat VERSION))
 GOOS ?= linux
@@ -10,33 +13,30 @@ BUILDED ?= $(shell date -u '+%Y-%m-%dT%H:%M:%S')
 BUILD_FLAGS = "-X main.Version=$(VERSION) -X main.GitCommit=$(COMMIT) -X main.BuildedDate=$(BUILDED)"
 BUILD_TAGS?=noah-gate
 DOCKER_TAG = latest
-SERVER ?= gate.noah.network
-PACKAGES=$(shell go list ./... | grep -v '/vendor/')
+SERVER ?= gate-api.noah.network
 
-all: test build
+all: get_deps build
 
+### Tools & dependencies ####
 #Run this from CI
-create_vendor:
-	@rm -rf vendor
-	@echo "--> Running go mod vendor"
-	@go mod vendor
+get_deps:
+	@echo "--> Running dep"
+	@go mod download
 
 ### Build ###################
 build: clean
-	GOOS=${GOOS} go build -ldflags $(BUILD_FLAGS) -o ./builds/$(APP)
+	GOOS=${GOOS} GOARCH=amd64 go build -ldflags $(BUILD_FLAGS) -o ./builds/${GOOS}/$(APP)
 
 install:
-	GOOS=${GOOS} go install -ldflags $(BUILD_FLAGS)
+	GOOS=${GOOS} GOARCH=amd64 go install -ldflags $(BUILD_FLAGS)
 
 clean:
 	@rm -f $(BINARY)
 
-### Test ####################
-test:
-	@echo "--> Running tests"
-	go test -v ${SRC}
-
 fmt:
 	@go fmt ./...
 
-.PHONY: create_vendor build clean fmt test
+docker_build:
+	docker build -f .docker/gate/Dockerfile --build-arg DOKCER_GO_VER=$(DOKCER_GO_VER) .
+
+.PHONY: get_deps build install clean fmt all
