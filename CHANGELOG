@@ -4,9 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## v1.2.0
 ### Added
+- transaction data in push transaction response
+### Changed
+- fix estimate error response
+### Removed
 
+## v1.1.0
+### Added
+- check explorer status and reject all request if explorer is down
 ### Changed
 
 ### Removed
