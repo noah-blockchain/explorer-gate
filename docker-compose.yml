@@ -1,0 +1,24 @@
+version: '3.6'
+
+services:
+  go:
+    build:
+      context: .
+      dockerfile: .docker/go/Dockerfile
+    ports:
+      - 2345:2345
+    volumes:
+      - ~/pkg/mod/:/go/pkg/mod:rw
+      - ./:/app
+    env_file:
+      - .env
+  gate:
+    build:
+      context: .
+      dockerfile: .docker/gate/Dockerfile
+    ports:
+      - 9000:9000
+    volumes:
+      - ~/pkg/mod/:/go/pkg/mod:rw
+    env_file:
+      - .env
